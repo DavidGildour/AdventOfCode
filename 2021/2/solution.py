@@ -129,7 +129,7 @@ if __name__ == '__main__':
         return Movement(direction, int(value))
 
     with open("./input.txt") as f:
-        submarine_course = [create_movement(*x.strip().split()) for x in f.readlines()]
+        submarine_course = [create_movement(*x.split()) for x in f.readlines()]
 
     position_prod = part_one(submarine_course)
     print(f"PART ONE: The position product is {position_prod}.")
