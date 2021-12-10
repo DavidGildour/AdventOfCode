@@ -1,0 +1,6 @@
+def part_one():
+    ...
+
+
+if __name__ == "__main__":
+    ...
