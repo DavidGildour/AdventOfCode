@@ -32,10 +32,11 @@ class Paper:
     def fold(self, instruction: str):
         axis, line = re.match(r"^fold along ([xy])=(\d+)$", instruction).groups()
         line = int(line)
-        if axis == "x":
-            self.fold_left(line)
-        elif axis == "y":
-            self.fold_up(line)
+        match axis:
+            case "x":
+                self.fold_left(line)
+            case "y":
+                self.fold_up(line)
 
     def fold_left(self, col: int):
         left = {dot for dot in self.dots if dot[0] < col}
