@@ -119,7 +119,7 @@ def part_two(numbers: list[int], board_list: list[BingoBoard]) -> int:
     return losing_board.get_score() * last_drawn_number
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         draw_numbers, _, *board_data = [x.strip() for x in f.readlines()]
         draw_numbers = list(map(int, draw_numbers.split(",")))

@@ -141,13 +141,15 @@ def part_two(dot_data: list[str], fold_instructions: list[str]) -> str:
     return str(paper)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         raw_data = [x.strip() for x in f.readlines()]
         separator_index = raw_data.index("")
-        dots, folds = raw_data[:separator_index], raw_data[separator_index+1:]
+        dots, folds = raw_data[:separator_index], raw_data[separator_index + 1 :]
 
     remaining_dots = part_one(dots, folds[0])
-    print(f"PART ONE: The number of dots remaining after folding once is equal to {remaining_dots}.")
+    print(
+        f"PART ONE: The number of dots remaining after folding once is equal to {remaining_dots}."
+    )
     secret_code = part_two(dots, folds)
     print(f"PART TWO: The secret code to activate the camera is:\n{secret_code}")

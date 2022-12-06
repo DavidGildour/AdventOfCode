@@ -106,15 +106,11 @@ def part_two(trees: list[str]) -> int:
 
     What do you get if you multiply together the number of trees encountered on each of the listed slopes?
     """
-    slopes = (
-        (1, 1),
-        (3, 1),
-        (5, 1),
-        (7, 1),
-        (1, 2)
-    )
+    slopes = ((1, 1), (3, 1), (5, 1), (7, 1), (1, 2))
 
-    return reduce(lambda x, y: x*y, (count_trees(trees, slope) for slope in slopes), 1)
+    return reduce(
+        lambda x, y: x * y, (count_trees(trees, slope) for slope in slopes), 1
+    )
 
 
 if __name__ == "__main__":

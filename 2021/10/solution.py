@@ -1,4 +1,10 @@
-from utils import ERROR_SCORES, validate_braces, get_completion_score, get_middle_element, complete_braces
+from utils import (
+    ERROR_SCORES,
+    validate_braces,
+    get_completion_score,
+    get_middle_element,
+    complete_braces,
+)
 
 
 def part_one(braces: list[str]) -> int:
@@ -125,7 +131,12 @@ def part_two(braces: list[str]) -> int:
     middle score?
     """
     incomplete_braces = [b for b in braces if validate_braces(b) == 0]
-    return get_middle_element([get_completion_score(braces) for braces in map(complete_braces, incomplete_braces)])
+    return get_middle_element(
+        [
+            get_completion_score(braces)
+            for braces in map(complete_braces, incomplete_braces)
+        ]
+    )
 
 
 if __name__ == "__main__":
@@ -133,6 +144,10 @@ if __name__ == "__main__":
         braces_data = [x.strip() for x in f.readlines()]
 
     error_score = part_one(braces_data)
-    print(f"PART ONE: The sum of the syntax error scores for corrupted lines is equal to: {error_score}")
+    print(
+        f"PART ONE: The sum of the syntax error scores for corrupted lines is equal to: {error_score}"
+    )
     middle_score = part_two(braces_data)
-    print(f"PART ONE: The winner of incomplete lines' contest has a score equal to: {middle_score}")
+    print(
+        f"PART ONE: The winner of incomplete lines' contest has a score equal to: {middle_score}"
+    )

@@ -88,10 +88,12 @@ def part_two(depths: list[int]) -> int:
     triple_a = zip(depths, depths[1:], depths[2:])
     triple_b = zip(depths[1:], depths[2:], depths[3:])
 
-    return len([diff for a, b in zip(triple_a, triple_b) if (diff := sum(b) - sum(a)) > 0])
+    return len(
+        [diff for a, b in zip(triple_a, triple_b) if (diff := sum(b) - sum(a)) > 0]
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         parsed_depths = [int(x.strip()) for x in f.readlines()]
 

@@ -175,11 +175,15 @@ def part_two(cave_passages: list[str]) -> int:
     return len(cave_system.routes)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         cave_data = [x.strip() for x in f.readlines()]
 
     total_routes = part_one(cave_data)
-    print(f"PART ONE: Total number of different routes you can take is equal to {total_routes}.")
+    print(
+        f"PART ONE: Total number of different routes you can take is equal to {total_routes}."
+    )
     total_routes = part_two(cave_data)
-    print(f"PART TWO: Total number of different routes with new rules is equal to {total_routes}.")
+    print(
+        f"PART TWO: Total number of different routes with new rules is equal to {total_routes}."
+    )

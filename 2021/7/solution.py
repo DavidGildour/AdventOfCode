@@ -1,6 +1,6 @@
 import math
-from functools import partial
 import statistics as stats
+from functools import partial
 
 
 def part_one(crabs: list[int]) -> int:
@@ -88,11 +88,15 @@ def part_two(crabs: list[int]) -> int:
     return min([floored_score, ceiled_score])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         crab_data = list(map(int, f.readline().split(",")))
 
     total_movement = part_one(crab_data)
-    print(f"PART ONE: The total number of movement necessary is equal to {int(total_movement)}.")
+    print(
+        f"PART ONE: The total number of movement necessary is equal to {int(total_movement)}."
+    )
     total_movement = part_two(crab_data)
-    print(f"PART TWO: The total number of movement necessary is equal to {total_movement}.")
+    print(
+        f"PART TWO: The total number of movement necessary is equal to {total_movement}."
+    )

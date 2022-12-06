@@ -52,7 +52,7 @@ if __name__ == "__main__":
         values_list = [int(x.strip()) for x in f.readlines()]
 
     v1, v2 = part_one(values_list)
-    print(f"PART ONE: {v1} * {v2} = {v1*v2}")
+    print(f"PART ONE: {v1} * {v2} = {v1 * v2}")
 
     v1, v2, v3 = part_two(values_list)
-    print(f"PART TWO: {v1} * {v2} * {v3} = {v1*v2*v3}")
+    print(f"PART TWO: {v1} * {v2} * {v3} = {v1 * v2 * v3}")

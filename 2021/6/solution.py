@@ -83,11 +83,15 @@ def get_those_fucking_fishes(fishes: list[int], after: int) -> int:
     return sum(counts)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         fish_data = list(map(int, f.readline().split(",")))
 
     total_fish = get_those_fucking_fishes(fish_data, 80)
-    print(f"PART ONE: The total number of fish after 80 days will be equal to {total_fish}.")
+    print(
+        f"PART ONE: The total number of fish after 80 days will be equal to {total_fish}."
+    )
     total_fish = get_those_fucking_fishes(fish_data, 256)
-    print(f"PART TWO: The total number of fish after 256 days will be equal to {total_fish}.")
+    print(
+        f"PART TWO: The total number of fish after 256 days will be equal to {total_fish}."
+    )

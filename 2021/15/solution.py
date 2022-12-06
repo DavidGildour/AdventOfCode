@@ -43,7 +43,10 @@ def part_one(data: list[str]):
     The total risk of this path is 40 (the starting position is never entered, so its risk is not counted).
 
     What is the lowest total risk of any path from the top left to the bottom right?"""
-    cells = [[Cell(x, y, int(risk)) for x, risk in enumerate(row)] for y, row in enumerate(data)]
+    cells = [
+        [Cell(x, y, int(risk)) for x, risk in enumerate(row)]
+        for y, row in enumerate(data)
+    ]
     labirynth = Labirynth(cells)
 
     route = labirynth.find_best_path()
@@ -187,11 +190,13 @@ def part_two(data: list[str]):
     return sum(c.risk for c in route) - 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         maze_data = [x.strip() for x in f.readlines()]
 
     lowest_risk = part_one(maze_data)
     print(f"PART ONE: The path with the lowest risk is the one equal to {lowest_risk}.")
     lowest_risk = part_two(maze_data)
-    print(f"PART TWO: The path with the lowest risk on the expanded grid is the one equal to {lowest_risk}.")
+    print(
+        f"PART TWO: The path with the lowest risk on the expanded grid is the one equal to {lowest_risk}."
+    )

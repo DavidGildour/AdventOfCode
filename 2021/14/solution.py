@@ -5,7 +5,7 @@ def apply_insertions(polymer: str, rules: dict[str, str]):
     buffer = list(polymer)
     offset = 0
     for i in range(len(polymer) - 1):
-        pair = polymer[i: i+2]
+        pair = polymer[i : i + 2]
         insertion = rules.get(pair)
         if not insertion:
             continue
@@ -25,7 +25,11 @@ def count_pairs(polymer: str) -> tuple[defaultdict[str, int], defaultdict[str, i
     return p, e
 
 
-def count_insertions(pair_count: defaultdict[str, int], element_count: defaultdict[str, int], rules: dict[str, str]):
+def count_insertions(
+    pair_count: defaultdict[str, int],
+    element_count: defaultdict[str, int],
+    rules: dict[str, str],
+):
     for pair, count in list(pair_count.items()):
         insertion = rules.get(pair)
         if not insertion:
@@ -125,13 +129,17 @@ def part_two(initial_state: str, rules: list[str]) -> int:
     return counts[-1] - counts[0]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         initial_polymer, _, *pair_insertions = [x.strip() for x in f.readlines()]
 
     difference = part_one(initial_polymer, pair_insertions)
-    print(f"PART ONE: The difference between the most and least common "
-          f"elements after 10 iterations is equal to {difference}.")
+    print(
+        f"PART ONE: The difference between the most and least common "
+        f"elements after 10 iterations is equal to {difference}."
+    )
     difference = part_two(initial_polymer, pair_insertions)
-    print(f"PART ONE: The difference between the most and least common "
-          f"elements after 40 iterations is equal to {difference}.")
+    print(
+        f"PART ONE: The difference between the most and least common "
+        f"elements after 40 iterations is equal to {difference}."
+    )

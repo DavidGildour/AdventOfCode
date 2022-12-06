@@ -92,13 +92,17 @@ def part_two(vents: list[Vent]) -> int:
     return sum(v > 1 for v in c.values())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         vent_data = [x.strip() for x in f.readlines()]
 
     vent_list = list(map(Vent, vent_data))
 
     intersections = part_one(vent_list)
-    print(f"PART ONE: The number of straight vents' intersections is equal to {intersections}.")
+    print(
+        f"PART ONE: The number of straight vents' intersections is equal to {intersections}."
+    )
     intersections = part_two(vent_list)
-    print(f"PART ONE: The number of all vents' intersections is equal to {intersections}.")
+    print(
+        f"PART ONE: The number of all vents' intersections is equal to {intersections}."
+    )

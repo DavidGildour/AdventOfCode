@@ -106,7 +106,7 @@ def part_two(report: list[str]) -> int:
     Use the binary numbers in your diagnostic report to calculate the oxygen generator rating and CO2 scrubber rating,
     then multiply them together. What is the life support rating of the submarine? (Be sure to represent your answer in
     decimal, not binary.)
-        """
+    """
     oxygen_candidates = report.copy()
     co2_candidates = report.copy()
 
@@ -116,7 +116,9 @@ def part_two(report: list[str]) -> int:
             (most, c1), (_, c2) = Counter(relevant_oxy).most_common()
             if c1 == c2:
                 most = "1"
-            oxygen_candidates = list(filter(lambda num: num[i] == most, oxygen_candidates))
+            oxygen_candidates = list(
+                filter(lambda num: num[i] == most, oxygen_candidates)
+            )
 
         if len(co2_candidates) > 1:
             relevant_co2 = (record[i] for record in co2_candidates)
@@ -133,7 +135,7 @@ def part_two(report: list[str]) -> int:
     return int(oxy, 2) * int(co2, 2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         diag_report = [x.strip() for x in f.readlines()]
 

@@ -96,7 +96,10 @@ def part_one(displays: list[Display]) -> int:
     In the output values, how many times do digits 1, 4, 7, or 8 appear?
     """
     return sum(
-        sum(len(display_entry) in LENGTH_TO_DIGIT.keys() for display_entry in display.output)
+        sum(
+            len(display_entry) in LENGTH_TO_DIGIT.keys()
+            for display_entry in display.output
+        )
         for display in displays
     )
 
@@ -169,12 +172,16 @@ def part_two(displays: list[Display]) -> int:
     return total
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         raw_data = [x.strip() for x in f.readlines()]
         display_data = list(map(Display.from_raw_input, raw_data))
 
     simple_digits_total = part_one(display_data)
-    print(f"PART ONE: The total number of simple digits on the displays is equal to {simple_digits_total}.")
+    print(
+        f"PART ONE: The total number of simple digits on the displays is equal to {simple_digits_total}."
+    )
     output_sum = part_two(display_data)
-    print(f"PART TWO: The total sum of the outputs on the displays is equal to {output_sum}.")
+    print(
+        f"PART TWO: The total sum of the outputs on the displays is equal to {output_sum}."
+    )

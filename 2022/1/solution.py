@@ -75,7 +75,7 @@ def part_two(data: list[str]) -> int:
     return sum(sorted(calories, reverse=True)[:3])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         raw_data = [x.strip() for x in f.readlines()]
 

@@ -3,10 +3,16 @@ from typing import Callable
 
 
 def has_required_keys(passport: str, required_keys: set[str]) -> bool:
-    return required_keys - set(map(lambda m: m.group(1), re.finditer(r"([a-z]{3}):", passport))) == set()
+    return (
+        required_keys
+        - set(map(lambda m: m.group(1), re.finditer(r"([a-z]{3}):", passport)))
+        == set()
+    )
 
 
-def has_fields_with_valid_values(passport: str, key_validators: dict[str, Callable[[str], bool]]) -> bool:
+def has_fields_with_valid_values(
+    passport: str, key_validators: dict[str, Callable[[str], bool]]
+) -> bool:
     for key, validator in key_validators.items():
         if not (match := re.search(f"{key}:(\\S*)", passport)):
             return False
@@ -154,6 +160,7 @@ def part_two(data: list[str]) -> int:
     Count the number of valid passports - those that have all required fields and valid values. Continue to treat cid as
     optional. In your batch file, how many passports are valid?
     """
+
     def height_validator(value: str) -> bool:
         if not (match := re.match(r"(\d+)(cm|in)", value)):
             return False
@@ -177,7 +184,7 @@ def part_two(data: list[str]) -> int:
         "hgt": height_validator,
         "hcl": color_validator,
         "ecl": lambda v: v in {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"},
-        "pid": lambda v: len(v) == 9 and v.isdigit()
+        "pid": lambda v: len(v) == 9 and v.isdigit(),
     }
 
     return len([p for p in data if has_fields_with_valid_values(p, key_validators)])

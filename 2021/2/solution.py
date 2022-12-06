@@ -10,18 +10,15 @@ DOWN = "down"
 def move_forth(position: Position, move: Movement) -> Position:
     if move.direction == FORWARD:
         return Position(
-            horizontal=position.horizontal + move.value,
-            depth=position.depth
+            horizontal=position.horizontal + move.value, depth=position.depth
         )
     elif move.direction == UP:
         return Position(
-            horizontal=position.horizontal,
-            depth=position.depth - move.value
+            horizontal=position.horizontal, depth=position.depth - move.value
         )
     elif move.direction == DOWN:
         return Position(
-            horizontal=position.horizontal,
-            depth=position.depth + move.value
+            horizontal=position.horizontal, depth=position.depth + move.value
         )
 
 
@@ -30,19 +27,19 @@ def move_forth_aimed(position: AimedPosition, move: Movement) -> AimedPosition:
         return AimedPosition(
             horizontal=position.horizontal + move.value,
             depth=position.depth + position.aim * move.value,
-            aim=position.aim
+            aim=position.aim,
         )
     elif move.direction == UP:
         return AimedPosition(
             horizontal=position.horizontal,
             depth=position.depth,
-            aim=position.aim - move.value
+            aim=position.aim - move.value,
         )
     elif move.direction == DOWN:
         return AimedPosition(
             horizontal=position.horizontal,
             depth=position.depth,
-            aim=position.aim + move.value
+            aim=position.aim + move.value,
         )
 
 
@@ -124,7 +121,8 @@ def part_two(course: Course) -> int:
     return position.horizontal * position.depth
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+
     def create_movement(direction: str, value: str) -> Movement:
         return Movement(direction, int(value))
 
