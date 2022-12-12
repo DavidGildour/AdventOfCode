@@ -19,7 +19,7 @@ def part_one(data: list[str]) -> int:
     return reduce(mul, sorted(m.inspection_count for m in monkes)[-2:])
 
 
-def part_two(data: list[str]):
+def part_two(data: list[str]) -> int:
     monkes = Parser.parse_input(data)
     product = reduce(mul, (monke.divisor for monke in monkes))
     for i in range(10000):
