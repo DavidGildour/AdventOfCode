@@ -1,5 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass
+from typing import Callable
 
 
 class IntTuple(tuple):
@@ -57,12 +58,19 @@ class Grid:
         s = self.start_area
         return abs(a.x - s.x) + abs(a.y - s.y)
 
-    def get_accessible_neighbours(self, area: Area) -> list[Area]:
+    @staticmethod
+    def default_filter(a: Area, b: Area) -> bool:
+        return a.height <= b.height + 1
+
+    def get_accessible_neighbours(
+        self, area: Area, neighbour_filter: Callable[[Area, Area], bool] | None
+    ) -> list[Area]:
         pos = area.position
-        h = area.height
+        if not neighbour_filter:
+            neighbour_filter = self.default_filter
         return list(
             filter(
-                lambda a: a is not None and a.height <= h + 1,
+                lambda a: a is not None and neighbour_filter(a, area),
                 (
                     self.height_map.get(pos + (0, -1)),
                     self.height_map.get(pos + (1, 0)),
@@ -72,34 +80,53 @@ class Grid:
             )
         )
 
-    def find_best_path(self, from_: Area) -> list[Area]:
-        start_area = from_
-        end_area = self.end_area
-
+    def a_star(
+        self,
+        start: Area,
+        heuristic: Callable[[Area], int],
+        criterion: Callable[[Area], bool],
+        neighbour_filter: Callable[[Area, Area], bool] | None = None,
+    ) -> list[Area]:
         g_score = defaultdict(lambda: float("inf"))
-        g_score[start_area] = 0
+        g_score[start] = 0
 
         f_score = defaultdict(lambda: float("inf"))
-        f_score[start_area] = self.heuristic(start_area)
+        f_score[start] = heuristic(start)
 
         came_from: dict[Area, Area] = dict()
-        open_set = {start_area}
+        open_set = {start}
 
         while open_set:
             current = sorted(open_set, key=f_score.get)[0]
-            if current == end_area:
+            if criterion(current):
                 return self.reconstruct_path(came_from, current)
             open_set.remove(current)
 
-            for neighbour in self.get_accessible_neighbours(current):
+            for neighbour in self.get_accessible_neighbours(current, neighbour_filter):
                 tentative_g_score = g_score[current] + 1
                 if tentative_g_score < g_score[neighbour]:
                     came_from[neighbour] = current
                     g_score[neighbour] = tentative_g_score
-                    f_score[neighbour] = tentative_g_score + self.heuristic(current)
+                    f_score[neighbour] = tentative_g_score + heuristic(current)
                     open_set.add(neighbour)
 
         return []
+
+    def find_first_a(self) -> list[Area]:
+        """Credits to Łukasz G. for giving me an idea to implement it that way."""
+        return self.a_star(
+            start=self.end_area,
+            heuristic=lambda x: 0,
+            criterion=lambda a: a.height == 0,
+            neighbour_filter=lambda a, b: b.height <= a.height + 1,
+        )
+
+    def find_best_path(self, from_: Area) -> list[Area]:
+        return self.a_star(
+            start=from_,
+            heuristic=self.heuristic,
+            criterion=lambda a: a == self.end_area,
+        )
 
     @staticmethod
     def reconstruct_path(came_from: dict[Area, Area], current: Area) -> list[Area]:

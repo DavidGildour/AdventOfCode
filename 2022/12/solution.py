@@ -14,6 +14,10 @@ def part_two(grid: Grid) -> int:
     )
 
 
+def part_two_alternative(grid: Grid) -> int:
+    return len(grid.find_first_a()) - 1
+
+
 if __name__ == "__main__":
     with open("./input.txt") as f:
         raw_data = [x.strip() for x in f.readlines()]
@@ -22,5 +26,5 @@ if __name__ == "__main__":
 
     first_answer = part_one(input_grid)
     print(f"PART ONE: The answer to part one is equal to {first_answer}.")
-    second_answer = part_two(input_grid)
+    second_answer = part_two_alternative(input_grid)
     print(f"PART ONE: The answer to part two is equal to {second_answer}.")
