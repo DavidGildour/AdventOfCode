@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
 parser = argparse.ArgumentParser(
     description="Create a boilerplate code and directory structure (in a current directory!) for a challenge on"
-    "a specific day of a specific year of Advent of Code event."
+                "a specific day of a specific year of Advent of Code event."
 )
 parser.add_argument("year", type=int, help="a day on the AoC")
 parser.add_argument("day", type=int, help="a year of the AoC")
