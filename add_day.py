@@ -14,8 +14,14 @@ def part_two(data: list[str]):
     ...
 
 
+parser = argparse.ArgumentParser(description="Solution for Advent of Code {day}/{year}.")
+parser.add_argument("-t", "--test", action="store_true", help="use test input")
+
 if __name__ == "__main__":
-    with open("./input_test.txt") as f:
+    args = parser.parse_args()
+    filename = "./input_test.txt" if args.test else "./input.txt"
+
+    with open(filename) as f:
         raw_data = [x.strip() for x in f.readlines()]
 
     first_answer = part_one(raw_data)
