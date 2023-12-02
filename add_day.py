@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 TEMPLATE = """\"\"\"https://adventofcode.com/{year}/day/{day}\"\"\"
+import argparse
 
 
 def part_one(data: list[str]):
