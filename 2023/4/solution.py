@@ -2,22 +2,47 @@
 import argparse
 
 
-def get_score(card: str) -> int:
+class CountdownStack(list):
+    def expand(self, length: int, times: int):
+        diff = max(length - len(self), 0)
+        self.extend([0] * diff)
+
+        for i in range(length):
+            self[i] += times
+
+    def smart_shift(self) -> int:
+        if not self:
+            return 1
+        return self.pop(0) + 1
+
+
+def get_winning_numbers(card: str) -> set[int]:
     _card_no, numbers = card.split(": ")
     winning_numbers, numbers_you_have = map(
         lambda x: {int(n) for n in x.split()}, numbers.split(" | ")
     )
-    matching_numbers = winning_numbers & numbers_you_have
+    return winning_numbers & numbers_you_have
+
+
+def get_score(card: str) -> int:
+    matching_numbers = get_winning_numbers(card)
 
     return 2 ** (len(matching_numbers) - 1) if matching_numbers else 0
 
 
-def part_one(data: list[str]):
+def part_one(data: list[str]) -> int:
     return sum(get_score(card) for card in data)
 
 
-def part_two(data: list[str]):
-    ...
+def part_two(data: list[str]) -> int:
+    countdown_stack = CountdownStack()
+    total = 0
+    for numbers in map(get_winning_numbers, data):
+        current_multiplier = countdown_stack.smart_shift()
+        total += current_multiplier
+        countdown_stack.expand(len(numbers), current_multiplier)
+
+    return total
 
 
 parser = argparse.ArgumentParser(description="Solution for Advent of Code 4/2023.")
