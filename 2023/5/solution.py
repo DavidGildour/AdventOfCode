@@ -108,7 +108,9 @@ def part_two(seed_data: str, *map_data: str):
     seed_ranges = get_ranges_from_string(seed_data.lstrip("seeds: "))
     maps = [parse_map(raw_map, variant=1) for raw_map in map_data]
 
-    return sorted(map(lambda x: x[0], map_seed_ranges_to_location(maps, seed_ranges))).pop(0)
+    return sorted(
+        map(lambda x: x[0], map_seed_ranges_to_location(maps, seed_ranges))
+    ).pop(0)
 
 
 parser = argparse.ArgumentParser(description="Solution for Advent of Code 5/2023.")
