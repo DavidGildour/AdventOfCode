@@ -28,12 +28,12 @@ if __name__ == "__main__":
     first_answer = part_one(raw_data)
     print(f"PART ONE: The answer to part one is equal to {{first_answer}}.")
     second_answer = part_two(raw_data)
-    print(f"PART ONE: The answer to part two is equal to {{second_answer}}.")
+    print(f"PART TWO: The answer to part two is equal to {{second_answer}}.")
 """
 
 parser = argparse.ArgumentParser(
     description="Create a boilerplate code and directory structure (in a current directory!) for a challenge on"
-                "a specific day of a specific year of Advent of Code event."
+    "a specific day of a specific year of Advent of Code event."
 )
 parser.add_argument("year", type=int, help="a day on the AoC")
 parser.add_argument("day", type=int, help="a year of the AoC")
