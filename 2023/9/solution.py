@@ -27,8 +27,7 @@ def extrapolate(sequence: list[int]) -> int:
 
 def extrapolate_backwards(sequence: list[int]) -> int:
     if (diff := get_arithmetic_difference_or_none(sequence)) is not None:
-        result = sequence[0] - diff
-        return result
+        return sequence[0] - diff
     return sequence[0] - extrapolate_backwards(get_derivative(sequence))
 
 
