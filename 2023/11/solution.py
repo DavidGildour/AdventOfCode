@@ -1,6 +1,5 @@
 """https://adventofcode.com/2023/day/11"""
 import argparse
-from copy import deepcopy
 from itertools import combinations
 
 EMPTY_VOID = "."
