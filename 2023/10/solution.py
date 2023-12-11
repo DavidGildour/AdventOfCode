@@ -55,7 +55,7 @@ class Maze:
 
 
 def part_one(data: list[str]) -> int:
-    return 0
+    return len(Maze(data).get_loop_from_start()) // 2
 
 
 def part_two(data: list[str]) -> int:
