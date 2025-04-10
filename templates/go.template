@@ -47,8 +47,10 @@ func main() {{
 	var inputFile string
 	if *isTest {{
 		inputFile = "input_test.txt"
+		fmt.Println("Running {year}/{day} solution on test input.")
 	}} else {{
 		inputFile = "input.txt"
+		fmt.Println("Running {year}/{day} solution on full input.")
 	}}
 
 	data, err := getFileInput(inputFile)

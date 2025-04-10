@@ -30,7 +30,13 @@ parser.add_argument("-t", "--test", action="store_true", help="use test input")
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    filename = "./input_test.txt" if args.test else "./input.txt"
+    filename: str
+    if args.test:
+        filename = "./input_test.txt"
+        print("Running {year}/{day} solution on test input.")
+    else:
+        filename = "./input.txt"
+        print("Running {year}/{day} solution on full input.")
 
     with open(filename) as f:
         raw_data = [x.strip() for x in f.readlines()]
