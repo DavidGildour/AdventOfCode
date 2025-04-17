@@ -101,6 +101,18 @@ func partOne(dataString string) (result int, err error) {
 	return
 }
 
+type coolSlice []int
+
+func (c coolSlice) withoutElement(i int) (res coolSlice) {
+	for ix, x := range c {
+		if ix != i {
+			res = append(res, x)
+		}
+	}
+
+	return
+}
+
 func partTwo(dataString string) (result int, err error) {
 	defer timeTrack(time.Now(), "part one")
 
@@ -115,7 +127,13 @@ func partTwo(dataString string) (result int, err error) {
 		if reportIsSafe(rep) {
 			result++
 		} else {
-			// TO DO
+			slicer := coolSlice(rep)
+			for i := range rep {
+				if reportIsSafe(slicer.withoutElement(i)) {
+					result++
+					break
+				}
+			}
 		}
 	}
 
