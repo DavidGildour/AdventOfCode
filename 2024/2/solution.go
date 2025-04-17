@@ -41,8 +41,7 @@ func checkAgainstDir(diff int, dir *int) bool {
 		return false
 	}
 
-	dirDetermined := ((*dir) != 0)
-	if !dirDetermined {
+	if *dir == 0 { // not determined yet
 		*dir = sign(diff)
 	}
 
