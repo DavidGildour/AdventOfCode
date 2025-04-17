@@ -3,6 +3,11 @@ import argparse
 from typing import Callable
 import timeit
 
+#####################  <UTILS> #####################
+
+parser = argparse.ArgumentParser(description="Solution for Advent of Code {day}/{year}.")
+parser.add_argument("-t", "--test", action="store_true", help="use test input")
+
 
 def timed(f: Callable) -> Callable:
     """Decorator to time the execution of a function."""
@@ -14,6 +19,8 @@ def timed(f: Callable) -> Callable:
         return result
     return wrapper
 
+##################### </UTILS> #####################
+
 
 @timed
 def part_one(data: list[str]):
@@ -24,9 +31,6 @@ def part_one(data: list[str]):
 def part_two(data: list[str]):
     ...
 
-
-parser = argparse.ArgumentParser(description="Solution for Advent of Code {day}/{year}.")
-parser.add_argument("-t", "--test", action="store_true", help="use test input")
 
 if __name__ == "__main__":
     args = parser.parse_args()

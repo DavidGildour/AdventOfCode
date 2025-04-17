@@ -10,6 +10,8 @@ import (
 )
 
 
+// #####################  <UTILS> #####################
+
 var isTest *bool = flag.Bool("test", false, "Read the test input")
 
 
@@ -27,6 +29,8 @@ func getFileInput(inputFile string) (string, error) {{
 
 	return string(rawData), nil
 }}
+
+// ##################### </UTILS> #####################
 
 
 func partOne(dataString string) (result string, err error) {{
