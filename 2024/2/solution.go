@@ -46,7 +46,7 @@ func checkAgainstDir(diff int, dir *int) bool {
 		*dir = sign(diff)
 	}
 
-	return (*dir)*diff < 0 || diff*diff > 9
+	return !((*dir)*diff < 0 || diff*diff > 9)
 }
 
 func reportIsSafe(report []int) bool {
