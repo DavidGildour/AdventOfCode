@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -31,66 +31,190 @@ func getFileInput(inputFile string) (string, error) {
 
 // ##################### </UTILS> #####################
 
-type Position struct {
-	x int
-	y int
-}
 
 type Dir int
 
 const (
-	N Dir = iota
+	NIL Dir = iota
+	N
+	NE
 	E
-	W
+	SE
 	S
+	SW
+	W
+	NW
 )
 
-func (p Position) toIndex(rowLength int) int {
-	return p.x*rowLength + p.y
+type Grid struct {
+	Data string
+	RowLength int
+	ColLength int
+}
+
+func (g Grid) GetValueIfExists(pos Position) byte {
+	if g.PositionExists(pos) {
+		return g.Data[pos.ToIndex(g.RowLength)]
+	}
+
+	return byte('\000')
+}
+
+func (g Grid) GetValue(pos Position) byte {
+	return g.Data[pos.ToIndex(g.RowLength)]
+}
+
+
+func (g Grid) PositionExists(pos Position) bool {
+	return pos.X >= 0 && pos.X < g.RowLength && pos.Y >= 0 && pos.Y < g.ColLength
+}
+
+
+func (g Grid) get2DPositions(ch rune, offset int) (positions []Position) {
+	ix := strings.IndexRune(g.Data[offset:], ch)
+	if ix >= 0 {
+		adjustedIx := ix + offset
+		position := createPositionFromIndex(adjustedIx, g.RowLength)
+		positions = append(positions, position)
+		return append(positions, g.get2DPositions(ch, adjustedIx+1)...)
+	}
+
+	return
+}
+
+func createGridFromString(dataString string) Grid {
+	rowLength := strings.Index(dataString, "\n") - 1
+	colLength := strings.Count(dataString, "\n") + 1
+
+	re := regexp.MustCompile(`\W`)
+
+	return Grid{
+		Data: re.ReplaceAllString(dataString, ""),
+		RowLength: rowLength,
+		ColLength: colLength,
+	}
+}
+
+type Position struct {
+	X int
+	Y int
+}
+
+func (p Position) ToIndex(rowLength int) int {
+	return (p.Y*rowLength) + p.X
+}
+
+func (p Position) GetNeighbour(dir Dir) Position {
+	switch dir {
+	case N:
+		return Position{p.X, p.Y - 1}
+	case NE:
+		return Position{p.X + 1, p.Y - 1}
+	case E:
+		return Position{p.X + 1, p.Y}
+	case SE:
+		return Position{p.X + 1, p.Y + 1}
+	case S:
+		return Position{p.X, p.Y + 1}
+	case SW:
+		return Position{p.X -1, p.Y + 1}
+	case W:
+		return Position{p.X - 1, p.Y}
+	case NW:
+		return Position{p.X - 1, p.Y -1}
+	default:
+		panic(fmt.Sprintf("Invalid direction: %v", dir))
+	}
+}
+
+func (p Position) GetValidNeighbours(grid Grid) (map[Dir]Position) {
+	res := make(map[Dir]Position)
+	for _, dir := range []Dir{N, NE, E, SE, S, SW, W, NW} {
+		neighbour := p.GetNeighbour(dir)
+		if grid.PositionExists(neighbour) {
+			res[dir] = neighbour
+		}
+	}
+
+	return res
 }
 
 func createPositionFromIndex(ix, rowLength int) Position {
 	return Position{
-		x: ix % rowLength,
-		y: ix / rowLength,
+		X: ix % rowLength,
+		Y: ix / rowLength,
 	}
 }
 
-func get2DPositions(str string, ch rune, rowLength, offset int) (positions []Position) {
-	ix := strings.IndexRune(str, ch)
-	if ix >= 0 {
-		adjustedIx := ix + offset
-		position := createPositionFromIndex(adjustedIx, rowLength)
-		positions = append(positions, position)
-		return append(positions, get2DPositions(str[ix+1:], ch, rowLength, adjustedIx+1)...)
+
+func searchWord(grid Grid, pos Position, dir Dir, remainingLetters string) (count int) {
+	if len(remainingLetters) == 0 {
+		return count + 1
+	}
+
+	wantedLetter := remainingLetters[0]
+
+	if dir != NIL {
+		next_pos := pos.GetNeighbour(dir)
+		if grid.GetValueIfExists(next_pos) == wantedLetter {
+			count += searchWord(grid, next_pos, dir, remainingLetters[1:])
+		}
+	} else {
+		for newDir, neighbour := range pos.GetValidNeighbours(grid) {
+			if grid.GetValue(neighbour) == wantedLetter {
+				count += searchWord(grid, neighbour, newDir, remainingLetters[1:])
+			}
+		}
 	}
 
 	return
 }
 
-func partOne(dataString string) (result string, err error) {
+func countWordsFrom(grid Grid, pos Position) int {
+	return searchWord(grid, pos, NIL, "MAS")
+}
+
+func spellsMAS(bytes []byte) bool {
+	return string(bytes) == "MAS" || string(bytes) == "SAM"
+}
+
+func isValidXMAS(grid Grid, pos Position) int {
+	topLeft := grid.GetValueIfExists(pos.GetNeighbour(NW))
+	topRight := grid.GetValueIfExists(pos.GetNeighbour(NE))
+	bottomLeft := grid.GetValueIfExists(pos.GetNeighbour(SW))
+	bottomRight := grid.GetValueIfExists(pos.GetNeighbour(SE))
+
+	if spellsMAS([]byte{topLeft, 'A', bottomRight}) && spellsMAS([]byte{bottomLeft, 'A', topRight}) {
+		return 1
+	}
+	return 0
+}
+
+func partOne(dataString string) (result int, err error) {
 	defer timeTrack(time.Now(), "part one")
 
-	// need to add 1 to adjust for '\n'
-	rowLength := strings.Index(dataString, "\n") + 1
-	positions := get2DPositions(dataString, 'X', rowLength, 0)
-
-	var wg sync.WaitGroup
-	wg.Add(len(positions))
+	grid := createGridFromString(dataString)
+	positions := grid.get2DPositions('X', 0)
 
 	for _, pos := range positions {
-		go func() {
-			wg.Add(1)
-		}()
+		result += countWordsFrom(grid, pos)
 	}
 
-	fmt.Println(rowLength, positions)
 
 	return
 }
 
-func partTwo(dataString string) (result string, err error) {
+func partTwo(dataString string) (result int, err error) {
 	defer timeTrack(time.Now(), "part two")
+
+	grid := createGridFromString(dataString)
+	positions := grid.get2DPositions('A', 0)
+
+	for _, pos := range positions {
+		result += isValidXMAS(grid, pos)
+	}
+
+
 	return
 }
 
