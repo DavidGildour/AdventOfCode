@@ -31,7 +31,6 @@ func getFileInput(inputFile string) (string, error) {
 
 // ##################### </UTILS> #####################
 
-
 type Dir int
 
 const (
@@ -47,14 +46,14 @@ const (
 )
 
 type Grid struct {
-	Data string
+	Data      string
 	RowLength int
 	ColLength int
 }
 
 func (g Grid) GetValueIfExists(pos Position) byte {
 	if g.PositionExists(pos) {
-		return g.Data[pos.ToIndex(g.RowLength)]
+		return g.GetValue(pos)
 	}
 
 	return byte('\000')
@@ -64,11 +63,9 @@ func (g Grid) GetValue(pos Position) byte {
 	return g.Data[pos.ToIndex(g.RowLength)]
 }
 
-
 func (g Grid) PositionExists(pos Position) bool {
 	return pos.X >= 0 && pos.X < g.RowLength && pos.Y >= 0 && pos.Y < g.ColLength
 }
-
 
 func (g Grid) get2DPositions(ch rune, offset int) (positions []Position) {
 	ix := strings.IndexRune(g.Data[offset:], ch)
@@ -89,7 +86,7 @@ func createGridFromString(dataString string) Grid {
 	re := regexp.MustCompile(`\W`)
 
 	return Grid{
-		Data: re.ReplaceAllString(dataString, ""),
+		Data:      re.ReplaceAllString(dataString, ""),
 		RowLength: rowLength,
 		ColLength: colLength,
 	}
@@ -101,7 +98,7 @@ type Position struct {
 }
 
 func (p Position) ToIndex(rowLength int) int {
-	return (p.Y*rowLength) + p.X
+	return (p.Y * rowLength) + p.X
 }
 
 func (p Position) GetNeighbour(dir Dir) Position {
@@ -117,17 +114,17 @@ func (p Position) GetNeighbour(dir Dir) Position {
 	case S:
 		return Position{p.X, p.Y + 1}
 	case SW:
-		return Position{p.X -1, p.Y + 1}
+		return Position{p.X - 1, p.Y + 1}
 	case W:
 		return Position{p.X - 1, p.Y}
 	case NW:
-		return Position{p.X - 1, p.Y -1}
+		return Position{p.X - 1, p.Y - 1}
 	default:
 		panic(fmt.Sprintf("Invalid direction: %v", dir))
 	}
 }
 
-func (p Position) GetValidNeighbours(grid Grid) (map[Dir]Position) {
+func (p Position) GetValidNeighbours(grid Grid) map[Dir]Position {
 	res := make(map[Dir]Position)
 	for _, dir := range []Dir{N, NE, E, SE, S, SW, W, NW} {
 		neighbour := p.GetNeighbour(dir)
@@ -145,7 +142,6 @@ func createPositionFromIndex(ix, rowLength int) Position {
 		Y: ix / rowLength,
 	}
 }
-
 
 func searchWord(grid Grid, pos Position, dir Dir, remainingLetters string) (count int) {
 	if len(remainingLetters) == 0 {
@@ -200,7 +196,6 @@ func partOne(dataString string) (result int, err error) {
 		result += countWordsFrom(grid, pos)
 	}
 
-
 	return
 }
 
@@ -213,7 +208,6 @@ func partTwo(dataString string) (result int, err error) {
 	for _, pos := range positions {
 		result += isValidXMAS(grid, pos)
 	}
-
 
 	return
 }
