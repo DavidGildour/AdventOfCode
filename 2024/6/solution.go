@@ -9,6 +9,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -215,7 +217,7 @@ func partOne(dataString string) (int, error) {
 	return len(visited_pos), nil
 }
 
-func partTwo(dataString string) (result int, err error) {
+func partTwo(dataString string) (int32, error) {
 	defer timeTrack(time.Now(), "part two")
 
 	grid := createGridFromString(dataString)
@@ -224,18 +226,28 @@ func partTwo(dataString string) (result int, err error) {
 		return 0, err
 	}
 
-	for _, pos := range visited_pos {
-		isLoop, err := obstacleProducesLoop(grid, pos)
-		if err != nil {
-			return 0, err
-		}
+	var result int32
+	var wg sync.WaitGroup
 
-		if isLoop {
-			result++
-		}
+	for _, pos := range visited_pos {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			isLoop, err := obstacleProducesLoop(grid, pos)
+			if err != nil {
+				panic(fmt.Sprint(err))
+			}
+
+			if isLoop {
+				atomic.AddInt32(&result, 1)
+			}
+		}()
 	}
 
-	return
+	wg.Wait()
+
+	return atomic.LoadInt32(&result), nil
 }
 
 func main() {
