@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -116,22 +118,31 @@ func partOne(dataString string) (result int, err error) {
 	return
 }
 
-func partTwo(dataString string) (result int, err error) {
+func partTwo(dataString string) (int, error) {
 	defer timeTrack(time.Now(), "part two")
 
 	testedOps := []Operator{Add, Mul, Con}
-	for _, testString := range strings.Split(dataString, "\n") {
-		test, err := createTestFromString(testString)
-		if err != nil {
-			return 0, err
-		}
+	var result int32
+	var wg sync.WaitGroup
 
-		if test.CanBeSolvedWith(testedOps) {
-			result += test.Result
-		}
+	for _, testString := range strings.Split(dataString, "\n") {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			test, err := createTestFromString(testString)
+			if err != nil {
+				panic("WTF1")
+			}
+
+			if test.CanBeSolvedWith(testedOps) {
+				atomic.AddInt32(&result, int32(test.Result))
+			}
+		}()
 	}
 
-	return
+	wg.Wait()
+
+	return int(atomic.LoadInt32(&result)), nil
 }
 
 func main() {
