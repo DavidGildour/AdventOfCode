@@ -131,8 +131,7 @@ type Region struct {
 func (r Region) GetAllPlots() *PlotSet {
 	result := make(PlotSet)
 	for _, pos := range r.Positions {
-		newPlot := Plot{pos, r.Type}
-		result[newPlot] = struct{}{}
+		result.AddPlot(pos, r.Type)
 	}
 
 	return &result
