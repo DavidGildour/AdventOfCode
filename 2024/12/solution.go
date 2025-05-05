@@ -8,8 +8,10 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
+	"unicode"
 )
 
 // #####################  <UTILS> #####################
@@ -151,6 +153,75 @@ func (r Region) Perimeter() (result int) {
 	return
 }
 
+func (r Region) CopyPositions() []Position {
+	return append([]Position{}, r.Positions...)
+}
+
+func (r Region) PositionsSortedVertically() []Position {
+	result := r.CopyPositions()
+	sort.Slice(result, func (i, j int) bool {
+		return result[i].X < result[j].X
+	})
+
+	return result
+}
+
+func (r Region) PositionsSortedHorizontally() []Position {
+	result := r.CopyPositions()
+	sort.Slice(result, func (i, j int) bool {
+		return result[i].Y < result[j].Y
+	})
+
+	return result
+}
+
+func (r Region) Sides() int {
+	sortedVertically := r.PositionsSortedVertically()
+	// sortedHorizontally := r.PositionsSortedHorizontally()
+
+	verticalSides := 0
+	prevIx := sortedVertically[0].X
+	var buffer []Position
+	for _, pos := range sortedVertically {
+		if prevIx != pos.X {
+			verticalSides += r.countVerticalSides(buffer)
+			buffer = buffer[:0]
+		}
+
+		buffer = append(buffer, pos)
+		prevIx = pos.X
+	}
+	verticalSides += r.countVerticalSides(buffer)
+
+	fmt.Println("vertical sides:", verticalSides)
+
+	return verticalSides
+}
+
+func (r Region) countVerticalSides(positions []Position) (count int) {
+	fmt.Println("counting sides for:", positions)
+	plotSet := r.GetAllPlots()
+	prevY := -1
+	for _, pos := range positions {
+		westernNeighbour := pos.GetNeighbour(W)
+		westernContinuityBroken := plotSet.PlotIsAvailable(westernNeighbour, r.Type) || prevY != pos.Y - 1
+		if westernContinuityBroken && prevY != -1 {
+			fmt.Println("westernContinuityBroken for:", pos)
+			count += 1
+		}
+		
+		easternContinuityBroken := plotSet.PlotIsAvailable(pos.GetNeighbour(E), r.Type) || prevY != pos.Y - 1
+		if easternContinuityBroken && prevY != -1 {
+			fmt.Println("easternContinuityBroken for:", pos)
+			count += 1
+		}
+
+		prevY = pos.Y
+	}
+
+	return
+}
+
 type Grid struct {
 	Data      string
 	RowLength int
@@ -198,7 +269,7 @@ func (g Grid) String() string {
 }
 
 func createGridFromString(dataString string) Grid {
-	rowLength := strings.Index(dataString, "\n")
+	rowLength := strings.IndexFunc(dataString, unicode.IsSpace)
 	colLength := strings.Count(dataString, "\n") + 1
 
 	re := regexp.MustCompile(`\s`)
@@ -252,12 +323,6 @@ func partOne(dataString string) (result int, err error) {
 
 	grid := createGridFromString(dataString)
 	for _, region := range ParseRegions(grid) {
-		// fmt.Printf("Region (%v):\n", i)
-		// fmt.Printf("\tType: %v\n", string(region.Type))
-		// fmt.Printf("\tPositions (%v):\n", region.Positions)
-		// fmt.Printf("\tArea: %v\n", region.Area())
-		// fmt.Printf("\tPerimeter: %v\n", region.Perimeter())
-		// fmt.Printf("\tPrice: %v * %v = %v\n", region.Area(), region.Perimeter(), region.Area()*region.Perimeter())
 		result += region.Area() * region.Perimeter()
 	}
 	return
@@ -265,6 +330,17 @@ func partOne(dataString string) (result int, err error) {
 
 func partTwo(dataString string) (result int, err error) {
 	defer timeTrack(time.Now(), "part two")
+	
+	grid := createGridFromString(dataString)
+	for i, region := range ParseRegions(grid) {
+		fmt.Printf("Region (%v):\n", i)
+		fmt.Printf("\tType: %v\n", string(region.Type))
+		fmt.Printf("\tPositions (%v):\n", region.Positions)
+		// fmt.Printf("\tArea: %v\n", region.Area())
+		// fmt.Printf("\tSides: %v\n", region.Sides())
+		// fmt.Printf("\tPrice: %v * %v = %v\n", region.Area(), region.Sides(), region.Area()*region.Sides())
+		result += region.Area() * region.Sides()
+	}
 	return
 }
 
