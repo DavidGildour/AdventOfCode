@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -46,6 +47,8 @@ const (
 const (
 	VOID = '\000'
 )
+
+// ##################### Position #####################
 
 type Position struct {
 	X int
@@ -91,6 +94,8 @@ func createPositionFromIndex(ix, rowLength int) Position {
 	}
 }
 
+// ##################### Plot #####################
+
 type Plot struct {
 	Pos  Position
 	Type byte
@@ -99,6 +104,8 @@ type Plot struct {
 func (p Plot) String() string {
 	return fmt.Sprintf("%v: %v", string(p.Type), p.Pos)
 }
+
+// ##################### PlotSet #####################
 
 type PlotSet map[Plot]struct{}
 
@@ -124,6 +131,8 @@ func (p *PlotSet) AddPlot(pos Position, plotType byte) {
 func (p *PlotSet) RemovePlot(plot Plot) {
 	delete(*p, plot)
 }
+
+// ##################### Region #####################
 
 type Region struct {
 	Positions []Position
@@ -153,74 +162,79 @@ func (r Region) Perimeter() (result int) {
 	return
 }
 
-func (r Region) CopyPositions() []Position {
-	return append([]Position{}, r.Positions...)
-}
-
-func (r Region) PositionsSortedVertically() []Position {
-	result := r.CopyPositions()
-	sort.Slice(result, func (i, j int) bool {
-		return result[i].X < result[j].X
-	})
-
-	return result
-}
-
-func (r Region) PositionsSortedHorizontally() []Position {
-	result := r.CopyPositions()
-	sort.Slice(result, func (i, j int) bool {
-		return result[i].Y < result[j].Y
-	})
-
-	return result
-}
-
-func (r Region) Sides() int {
-	sortedVertically := r.PositionsSortedVertically()
-	// sortedHorizontally := r.PositionsSortedHorizontally()
-
-	verticalSides := 0
-	prevIx := sortedVertically[0].X
-	var buffer []Position
-	for _, pos := range sortedVertically {
-		if prevIx != pos.X {
-			verticalSides += r.countVerticalSides(buffer)
-			buffer = buffer[:0]
-		}
-
-		buffer = append(buffer, pos)
-		prevIx = pos.X
+func (r Region) Sides() (sides int) {
+	verticalSlices := make(map[int][]Position)
+	horizontalSlices := make(map[int][]Position)
+	for _, pos := range r.Positions {
+		verticalSlices[pos.X] = append(verticalSlices[pos.X], pos)
+		horizontalSlices[pos.Y] = append(horizontalSlices[pos.Y], pos)
 	}
-	verticalSides += r.countVerticalSides(buffer)
 
-	fmt.Println("vertical sides:", verticalSides)
-
-	return verticalSides
-}
-
-func (r Region) countVerticalSides(positions []Position) (count int) {
-	fmt.Println("counting sides for:", positions)
-	plotSet := r.GetAllPlots()
-	prevY := -1
-	for _, pos := range positions {
-		westernNeighbour := pos.GetNeighbour(W)
-		westernContinuityBroken := plotSet.PlotIsAvailable(westernNeighbour, r.Type) || prevY != pos.Y - 1
-		if westernContinuityBroken && prevY != -1 {
-			fmt.Println("westernContinuityBroken for:", pos)
-			count += 1
-		}
-		
-		easternContinuityBroken := plotSet.PlotIsAvailable(pos.GetNeighbour(E), r.Type) || prevY != pos.Y - 1
-		if easternContinuityBroken && prevY != -1 {
-			fmt.Println("easternContinuityBroken for:", pos)
-			count += 1
-		}
-
-		prevY = pos.Y
+	for _, slice := range verticalSlices {
+		sides += r.countSides(slice, VERTICAL)
+	}
+	for _, slice := range horizontalSlices {
+		sides += r.countSides(slice, HORIZONTAL)
 	}
 
 	return
 }
+
+func (r Region) countSides(regionSlice []Position, sliceType Orientation) int {
+	addToLastSlice := func(slices *[][]Position, v Position) {
+		if len(*slices) == 0 {
+			*slices = append(*slices, []Position{})
+		}
+		(*slices)[len(*slices)-1] = append((*slices)[len(*slices)-1], v)
+	}
+
+	var dirs []Dir
+	var sortType Orientation
+	if sliceType == VERTICAL {
+		sortType = HORIZONTAL
+		dirs = []Dir{W, E}
+	} else {
+		sortType = VERTICAL
+		dirs = []Dir{N, S}
+	}
+
+	plotSet := r.GetAllPlots()
+	var sidesA, sidesB [][]Position
+	lastIndexA, lastIndexB := -1, -1
+	for _, pos := range Sort(regionSlice, sortType) {
+		var currentIndex int
+		if sliceType == VERTICAL {
+			currentIndex = pos.Y
+		} else {
+			currentIndex = pos.X
+		}
+
+		continuityBrokenA := lastIndexA >= 0 && lastIndexA != currentIndex-1
+		continuityBrokenB := lastIndexB >= 0 && lastIndexB != currentIndex-1
+		positionHasSideA := !plotSet.PlotIsAvailable(pos.GetNeighbour(dirs[0]), r.Type)
+		positionHasSideB := !plotSet.PlotIsAvailable(pos.GetNeighbour(dirs[1]), r.Type)
+
+		if positionHasSideA {
+			if continuityBrokenA {
+				sidesA = append(sidesA, []Position{})
+			}
+			addToLastSlice(&sidesA, pos)
+			lastIndexA = currentIndex
+		}
+
+		if positionHasSideB {
+			if continuityBrokenB {
+				sidesB = append(sidesB, []Position{})
+			}
+			addToLastSlice(&sidesB, pos)
+			lastIndexB = currentIndex
+		}
+	}
+
+	return len(sidesA) + len(sidesB)
+}
+
+// ##################### Grid #####################
 
 type Grid struct {
 	Data      string
@@ -281,6 +295,27 @@ func createGridFromString(dataString string) Grid {
 	}
 }
 
+// ##################### Others #####################
+
+type Orientation int
+
+const (
+	VERTICAL Orientation = iota
+	HORIZONTAL
+)
+
+func Sort(positions []Position, how Orientation) []Position {
+	result := slices.Clone(positions)
+	sort.Slice(result, func(i, j int) bool {
+		if how == VERTICAL {
+			return result[i].X < result[j].X
+		}
+		return result[i].Y < result[j].Y
+	})
+
+	return result
+}
+
 func ParseRegion(startingPlot Plot, plotSet *PlotSet) Region {
 	plotType := startingPlot.Type
 	var accumulatedPlots []Position
@@ -330,15 +365,9 @@ func partOne(dataString string) (result int, err error) {
 
 func partTwo(dataString string) (result int, err error) {
 	defer timeTrack(time.Now(), "part two")
-	
+
 	grid := createGridFromString(dataString)
-	for i, region := range ParseRegions(grid) {
-		fmt.Printf("Region (%v):\n", i)
-		fmt.Printf("\tType: %v\n", string(region.Type))
-		fmt.Printf("\tPositions (%v):\n", region.Positions)
-		// fmt.Printf("\tArea: %v\n", region.Area())
-		// fmt.Printf("\tSides: %v\n", region.Sides())
-		// fmt.Printf("\tPrice: %v * %v = %v\n", region.Area(), region.Sides(), region.Area()*region.Sides())
+	for _, region := range ParseRegions(grid) {
 		result += region.Area() * region.Sides()
 	}
 	return
