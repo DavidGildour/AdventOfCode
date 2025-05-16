@@ -127,48 +127,94 @@ func (w *Warehouse) SetPosition(p Position, cellType rune) {
 	w.Map[p.ToIndex(w.Width)] = cellType
 }
 
-func (w *Warehouse) ShiftCells(a, b Position) {
-	w.SetPosition(a, w.GetPosition(b))
-	w.SetPosition(b, EMPTY)
+func (w *Warehouse) GetBoxComponents(boxPos Position) (leftCell, rightCell Position) {
+	if cellType := w.GetPosition(boxPos); cellType == LEFT_BOX {
+		leftCell = boxPos
+		rightCell = boxPos.GetNeighbour(E)
+	} else {
+		leftCell = boxPos.GetNeighbour(W)
+		rightCell = boxPos
+	}
+	return
 }
 
-func (w *Warehouse) MoveCell(pos Position, dir Dir) bool {
+func (w *Warehouse) SwapCells(a, b Position) {
+	prev := w.GetPosition(a)
+	w.SetPosition(a, w.GetPosition(b))
+	w.SetPosition(b, prev)
+}
+
+func (w *Warehouse) CanBoxCellsBeMoved(pos Position, dir Dir) bool {
+	leftCell, rightCell := w.GetBoxComponents(pos)
+
+	switch dir {
+	case W:
+		return w.CanCellBeMoved(leftCell, dir)
+	case E:
+		return w.CanCellBeMoved(rightCell, dir)
+	default:
+		return w.CanCellBeMoved(leftCell, dir) && w.CanCellBeMoved(rightCell, dir)
+	}
+}
+
+func (w *Warehouse) CanCellBeMoved(pos Position, dir Dir) bool {
 	nextCell := pos.GetNeighbour(dir)
-	// fmt.Println("pos:", pos, "cell:", string(w.GetPosition(pos)), "dir:", dir, "nextCell:", string(w.GetPosition(nextCell)))
 	switch w.GetPosition(nextCell) {
 	case WALL:
 		return false
 	case EMPTY:
-		w.ShiftCells(nextCell, pos)
 		return true
 	case SIMPLE_BOX:
-		if w.MoveCell(nextCell, dir) {
-			w.ShiftCells(nextCell, pos)
-			return true
-		}
-		return false
-	case RIGHT_BOX:
-		// leftBox := nextCell.GetNeighbour(W)
-		return false
+		return w.CanCellBeMoved(nextCell, dir)
+	case LEFT_BOX, RIGHT_BOX:
+		return w.CanBoxCellsBeMoved(nextCell, dir)
 	default:
 		panic(fmt.Sprintf("WTF is this: '%c'", w.GetPosition(nextCell)))
-		return false
 	}
+}
 
-	return false
+func (w *Warehouse) MoveBoxCells(boxPos Position, dir Dir) {
+	leftCell, rightCell := w.GetBoxComponents(boxPos)
+
+	switch dir {
+	case W:
+		w.MoveCell(leftCell, dir)
+		w.SwapCells(leftCell, rightCell)
+	case E:
+		w.MoveCell(rightCell, dir)
+		w.SwapCells(rightCell, leftCell)
+	default:
+		w.MoveCell(leftCell, dir)
+		w.MoveCell(rightCell, dir)
+	}
+}
+
+func (w *Warehouse) MoveCell(pos Position, dir Dir) {
+	nextCell := pos.GetNeighbour(dir)
+	switch w.GetPosition(nextCell) {
+	case EMPTY:
+		w.SwapCells(nextCell, pos)
+	case LEFT_BOX, RIGHT_BOX:
+		w.MoveBoxCells(nextCell, dir)
+		w.SwapCells(nextCell, pos)
+	default:
+		w.MoveCell(nextCell, dir)
+		w.SwapCells(nextCell, pos)
+	}
 }
 
 func (w *Warehouse) ApplyMove(move rune) {
 	dir := map[rune]Dir{'>': E, '<': W, '^': N, 'v': S}[move]
 
-	if w.MoveCell(w.RobotPosition, dir) {
+	if w.CanCellBeMoved(w.RobotPosition, dir) {
+		w.MoveCell(w.RobotPosition, dir)
 		w.RobotPosition = w.RobotPosition.GetNeighbour(dir)
 	}
 }
 
 func (w *Warehouse) SumGPS() (result int) {
 	for i, cell := range w.Map {
-		if cell == SIMPLE_BOX {
+		if cell == SIMPLE_BOX || cell == LEFT_BOX {
 			pos := createPositionFromIndex(i, w.Width)
 			result += pos.X + pos.Y*100
 		}
@@ -192,6 +238,7 @@ func WarehouseFromGrid(grid Grid) *Warehouse {
 
 func ChonkyWarehouseFromGrid(grid Grid) *Warehouse {
 	currentState := make(map[int]rune)
+	var robotIx int
 	var i int
 	for _, cell := range grid.Data {
 		cellRune := rune(cell)
@@ -201,6 +248,7 @@ func ChonkyWarehouseFromGrid(grid Grid) *Warehouse {
 		} else if cellRune == ROBOT {
 			currentState[i] = ROBOT
 			currentState[i+1] = EMPTY
+			robotIx = i
 		} else {
 			currentState[i] = rune(cell)
 			currentState[i+1] = rune(cell)
@@ -212,7 +260,7 @@ func ChonkyWarehouseFromGrid(grid Grid) *Warehouse {
 	return &Warehouse{
 		Width:         grid.RowLength * 2,
 		Height:        grid.ColLength,
-		RobotPosition: createPositionFromIndex(strings.IndexRune(grid.Data, ROBOT), grid.RowLength*2),
+		RobotPosition: createPositionFromIndex(robotIx, grid.RowLength*2),
 		Map:           currentState,
 	}
 }
@@ -243,12 +291,12 @@ func partOne(dataString string) (result int, err error) {
 func partTwo(dataString string) (result int, err error) {
 	defer timeTrack(time.Now(), "part two")
 
-	grid, _ := ParseInput(dataString)
+	grid, moves := ParseInput(dataString)
 	warehouse := ChonkyWarehouseFromGrid(grid)
 
-	// for _, move := range moves {
-	// 	warehouse.ApplyMove(move)
-	// }
+	for _, move := range moves {
+		warehouse.ApplyMove(move)
+	}
 	fmt.Println(warehouse)
 
 	return warehouse.SumGPS(), nil
