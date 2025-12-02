@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/16"""
+
 import argparse
 from dataclasses import dataclass
 from enum import Enum, auto

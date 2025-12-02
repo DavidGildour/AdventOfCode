@@ -6,7 +6,13 @@ Stack = list[str]
 InstructionList = list[str]
 
 
-def move_crates(stacks: dict[int, Stack], how_many: int, _from: int, _to: int, crane_model: str = "9000"):
+def move_crates(
+    stacks: dict[int, Stack],
+    how_many: int,
+    _from: int,
+    _to: int,
+    crane_model: str = "9000",
+):
     stack_a = stacks[_from]
     stack_b = stacks[_to]
 
@@ -148,7 +154,9 @@ def part_two(input_stacks: dict[int, Stack], instructions: InstructionList) -> s
     return solve(input_stacks, instructions, crane_model="9001")
 
 
-def solve(input_stacks: dict[int, Stack], instructions: InstructionList, crane_model: str) -> str:
+def solve(
+    input_stacks: dict[int, Stack], instructions: InstructionList, crane_model: str
+) -> str:
     input_stacks = deepcopy(input_stacks)
     for instruction in instructions:
         how_many, _from, _to = map(int, re.findall(r"\d+", instruction))

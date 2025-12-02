@@ -99,7 +99,7 @@ def part_two(height_map: HeightMap) -> int:
     return reduce(lambda a, b: a * b, sorted(basin_sizes)[-3:], 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("./input.txt") as f:
         map_data = [x.strip() for x in f.readlines()]
         hmap = HeightMap(map_data)

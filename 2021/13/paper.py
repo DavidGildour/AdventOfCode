@@ -40,12 +40,12 @@ class Paper:
 
     def fold_left(self, col: int):
         left = {dot for dot in self.dots if dot[0] < col}
-        right = {(x - (x - col)*2, y) for x, y in self.dots if x > col}
+        right = {(x - (x - col) * 2, y) for x, y in self.dots if x > col}
         self.dots = left | right
 
     def fold_up(self, row: int):
         up = {dot for dot in self.dots if dot[1] < row}
-        down = {(x, y - (y - row)*2) for x, y in self.dots if y > row}
+        down = {(x, y - (y - row) * 2) for x, y in self.dots if y > row}
         self.dots = up | down
 
     def __str__(self) -> str:

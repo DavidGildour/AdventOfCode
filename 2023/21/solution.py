@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/21"""
+
 import argparse
 from functools import reduce
 
@@ -96,8 +97,7 @@ def part_one(data: list[str]):
     return garden.reachable_plots(64)
 
 
-def part_two(data: list[str]):
-    ...
+def part_two(data: list[str]): ...
 
 
 parser = argparse.ArgumentParser(description="Solution for Advent of Code 21/2023.")

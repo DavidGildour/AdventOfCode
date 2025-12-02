@@ -1,17 +1,7 @@
 from functools import reduce
 
-LENGTH_TO_DIGIT = {
-    2: 1,
-    3: 7,
-    4: 4,
-    7: 8
-}
-DIGIT_TO_LENGTH = {
-    1: 2,
-    4: 4,
-    7: 3,
-    8: 7
-}
+LENGTH_TO_DIGIT = {2: 1, 3: 7, 4: 4, 7: 8}
+DIGIT_TO_LENGTH = {1: 2, 4: 4, 7: 3, 8: 7}
 DIGIT_MAP = {
     "abcefg": "0",
     "cf": "1",
@@ -28,7 +18,9 @@ DIGIT_MAP = {
 
 def get_digits_with_unique_lengths(uniques: set[str]) -> list[str]:
     return [
-        [x for x in uniques if len(x) == DIGIT_TO_LENGTH[i]].pop() if i in DIGIT_TO_LENGTH else ""
+        [x for x in uniques if len(x) == DIGIT_TO_LENGTH[i]].pop()
+        if i in DIGIT_TO_LENGTH
+        else ""
         for i in range(10)
     ]
 
@@ -41,7 +33,9 @@ def get_segment_difference(raw_digit1: str, raw_digit2: str) -> str:
     return "".join(set(raw_digit1) - set(raw_digit2))
 
 
-def deduce_digit_two(uniques: set[str], digit_four: str, top_segment: str) -> tuple[str, str, str]:
+def deduce_digit_two(
+    uniques: set[str], digit_four: str, top_segment: str
+) -> tuple[str, str, str]:
     candidates = [x for x in uniques if len(x) == 5]
     diffs = [
         get_segment_difference(candidate_235, digit_four)
@@ -49,13 +43,16 @@ def deduce_digit_two(uniques: set[str], digit_four: str, top_segment: str) -> tu
     ]
     bottom_segment = "".join(reduce(set.intersection, map(set, diffs)) - {top_segment})
     diffs = ["".join(diff - set(bottom_segment)) for diff in map(set, diffs)]
-    bottom_left_segment = ["".join(set(diff) - {top_segment}) for diff in diffs if len(diff) == 2].pop()
+    bottom_left_segment = [
+        "".join(set(diff) - {top_segment}) for diff in diffs if len(diff) == 2
+    ].pop()
     number_two = [c for c in candidates if bottom_left_segment in c].pop()
     return number_two, bottom_segment, bottom_left_segment
 
 
-def deduce_digit_three_and_five(uniques: set[str], digit_two: str, right_segments: str)\
-        -> tuple[str, str, str, str]:
+def deduce_digit_three_and_five(
+    uniques: set[str], digit_two: str, right_segments: str
+) -> tuple[str, str, str, str]:
     candidates = [x for x in uniques if len(x) == 5 and x != digit_two]
     five, three = sorted(candidates, key=lambda x: len(set(x) & set(right_segments)))
     bottom_right_segment = get_common_segments(five, right_segments)
@@ -85,15 +82,21 @@ def get_wire_mapping(uniques: set[str]) -> dict[str, str]:
     wire_candidates[0] = get_segment_difference(decoded_digits[7], decoded_digits[1])
 
     # get digit 2, bottom segment and bottom left segment
-    decoded_digits[2], wire_candidates[6], wire_candidates[4] =\
-        deduce_digit_two(uniques, decoded_digits[4], wire_candidates[0])
+    decoded_digits[2], wire_candidates[6], wire_candidates[4] = deduce_digit_two(
+        uniques, decoded_digits[4], wire_candidates[0]
+    )
 
     # get digits 3 and 5, top and bottom right segments
-    decoded_digits[3], decoded_digits[5], wire_candidates[2], wire_candidates[5] =\
+    decoded_digits[3], decoded_digits[5], wire_candidates[2], wire_candidates[5] = (
         deduce_digit_three_and_five(uniques, decoded_digits[2], wire_candidates[2])
+    )
 
     wire_candidates[3] = get_middle_segment(
-        decoded_digits[2], decoded_digits[3], decoded_digits[5], wire_candidates[0], wire_candidates[6]
+        decoded_digits[2],
+        decoded_digits[3],
+        decoded_digits[5],
+        wire_candidates[0],
+        wire_candidates[6],
     )
 
     wire_candidates[1] = get_top_left_segment(wire_candidates)

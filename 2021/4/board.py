@@ -7,7 +7,11 @@ class BingoBoard:
     def get_index_dict(self) -> dict[int, tuple[int, int]]:
         """Creates a dictionary with values of the numbers on the board as keys and their (x, y) indices as values to
         mitigate the need to iterate over the numbers array every time we want to check if the number is there."""
-        return {cell: (x, y) for y, row in enumerate(self.numbers) for x, cell in enumerate(row)}
+        return {
+            cell: (x, y)
+            for y, row in enumerate(self.numbers)
+            for x, cell in enumerate(row)
+        }
 
     @staticmethod
     def get_empty_mask() -> list[list[bool]]:

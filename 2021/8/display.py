@@ -9,7 +9,4 @@ class Display:
     @classmethod
     def from_raw_input(cls, inpt: str) -> "Display":
         unique, output = inpt.split("|")
-        return cls(
-            unique_signals=set(unique.split()),
-            output=list(output.split())
-        )
+        return cls(unique_signals=set(unique.split()), output=list(output.split()))

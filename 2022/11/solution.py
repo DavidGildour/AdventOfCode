@@ -1,4 +1,5 @@
 """https://adventofcode.com/2022/day/11"""
+
 from functools import reduce
 from operator import mul
 

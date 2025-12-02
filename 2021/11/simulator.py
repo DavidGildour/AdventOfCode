@@ -33,7 +33,8 @@ class OctopiSimulator:
     @staticmethod
     def create_light_map(light_data: list[str]) -> tuple[tuple[Point, ...], ...]:
         return tuple(
-            tuple(map(lambda v: Point(x, v[0], int(v[1])), enumerate(col))) for x, col in enumerate(zip(*light_data))
+            tuple(map(lambda v: Point(x, v[0], int(v[1])), enumerate(col)))
+            for x, col in enumerate(zip(*light_data))
         )
 
     @property
@@ -46,16 +47,21 @@ class OctopiSimulator:
         return self.light_map[x][y]
 
     def get_neighbours(self, x: int, y: int) -> tuple[Point, ...]:
-        return tuple(filter(lambda p: p and not p.flashed, (
-            self.get(x - 1, y - 1),
-            self.get(x,     y - 1),
-            self.get(x + 1, y - 1),
-            self.get(x - 1, y),
-            self.get(x + 1, y),
-            self.get(x - 1, y + 1),
-            self.get(x,     y + 1),
-            self.get(x + 1, y + 1),
-        )))
+        return tuple(
+            filter(
+                lambda p: p and not p.flashed,
+                (
+                    self.get(x - 1, y - 1),
+                    self.get(x, y - 1),
+                    self.get(x + 1, y - 1),
+                    self.get(x - 1, y),
+                    self.get(x + 1, y),
+                    self.get(x - 1, y + 1),
+                    self.get(x, y + 1),
+                    self.get(x + 1, y + 1),
+                ),
+            )
+        )
 
     def valid_coordinates(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height

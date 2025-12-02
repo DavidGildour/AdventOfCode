@@ -29,7 +29,12 @@ class Forest:
 
     @classmethod
     def from_strings(cls, tree_lines: list[str]) -> "Forest":
-        return cls([[Tree(int(h), IntTuple((x, y))) for x, h in enumerate(line)] for y, line in enumerate(tree_lines)])
+        return cls(
+            [
+                [Tree(int(h), IntTuple((x, y))) for x, h in enumerate(line)]
+                for y, line in enumerate(tree_lines)
+            ]
+        )
 
     def get_next_tree(self, tree: Tree, direction: str) -> Tree | None:
         return {

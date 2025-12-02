@@ -25,7 +25,9 @@ class Route:
 
     @property
     def bonus_traversal_available(self) -> bool:
-        return all(self.caves.count(cave) == 1 for cave in self.caves if not cave.is_big)
+        return all(
+            self.caves.count(cave) == 1 for cave in self.caves if not cave.is_big
+        )
 
     @property
     def length(self) -> int:

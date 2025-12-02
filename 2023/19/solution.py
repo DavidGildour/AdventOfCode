@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/19"""
+
 import argparse
 from collections import defaultdict
 

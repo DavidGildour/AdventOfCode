@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/6"""
+
 import argparse
 import re
 from functools import reduce
@@ -17,9 +18,7 @@ def get_single_number(s: str) -> int:
 
 
 def delta(a: int, b: int, c: int) -> tuple[int, int]:
-    return (-b - sqrt(b**2 - 4 * a * c)) / 2 * a, (
-        -b + sqrt(b**2 - 4 * a * c)
-    ) / 2 * a
+    return (-b - sqrt(b**2 - 4 * a * c)) / 2 * a, (-b + sqrt(b**2 - 4 * a * c)) / 2 * a
 
 
 def get_margin(t: int, d: int) -> int:

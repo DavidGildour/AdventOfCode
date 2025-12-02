@@ -1,4 +1,5 @@
 """https://adventofcode.com/2025/day/1"""
+
 import argparse
 import logging
 from dataclasses import dataclass
@@ -13,13 +14,16 @@ parser.add_argument("-t", "--test", action="store_true", help="use test input")
 
 def timed(func: Callable) -> Callable:
     """Decorator to time the execution of a function."""
+
     def wrapper(*args, **kwargs):
         start_time = timeit.default_timer()
         result = func(*args, **kwargs)
         end_time = timeit.default_timer()
         print(f"Function {func.__name__} took {end_time - start_time:.6f} seconds")
         return result
+
     return wrapper
+
 
 ##################### </UTILS> #####################
 
@@ -70,7 +74,12 @@ class Rotation:
     def from_string(cls, input_string: str, previous_position: int) -> "Rotation":
         direction, value = input_string[0], int(input_string[1:])
         sign = 1 if direction == "R" else -1
-        return cls(raw_str=input_string, direction=sign, value=value, previous_position=previous_position)
+        return cls(
+            raw_str=input_string,
+            direction=sign,
+            value=value,
+            previous_position=previous_position,
+        )
 
 
 def rotation_generator(data: list[str]) -> Generator[Rotation, None, None]:

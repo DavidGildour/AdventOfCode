@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/11"""
+
 import argparse
 from itertools import combinations
 

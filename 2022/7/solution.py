@@ -52,7 +52,7 @@ def get_sum_of_sizes_below(threshold: int, top_dir: Directory) -> int:
 
 
 def find_the_smallest_suitable_dir(
-        space_to_free_up: int, top_dir: Directory, current_min: int
+    space_to_free_up: int, top_dir: Directory, current_min: int
 ) -> int:
     next_level = []
     for child in top_dir.children.values():

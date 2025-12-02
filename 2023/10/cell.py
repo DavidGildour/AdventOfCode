@@ -23,8 +23,7 @@ class Cell(ABC):
         }[symbol](Position((x, y)))
 
     @abstractmethod
-    def get_positions_of_connected_cells(self) -> tuple[Position, ...]:
-        ...
+    def get_positions_of_connected_cells(self) -> tuple[Position, ...]: ...
 
 
 class Start(Cell):

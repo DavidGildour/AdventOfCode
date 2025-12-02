@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/5"""
+
 import argparse
 from functools import reduce
 from itertools import batched

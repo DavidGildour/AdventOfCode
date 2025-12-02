@@ -1,4 +1,5 @@
 """https://adventofcode.com/2020/day/5"""
+
 import argparse
 from math import ceil
 from typing import Iterator

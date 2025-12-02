@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/8"""
+
 import argparse
 import re
 import timeit

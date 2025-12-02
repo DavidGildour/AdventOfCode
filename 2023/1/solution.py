@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/1"""
+
 import argparse
 import re
 
@@ -23,12 +24,12 @@ def has_a_digit_word(string: str, parse_reversed: bool = False) -> str | None:
 
 
 def consider_next_character(
-        buffer: str, next_char: str, parse_reversed: bool = False
+    buffer: str, next_char: str, parse_reversed: bool = False
 ) -> tuple[str, bool]:
     if next_char.isdigit():
         return next_char, True
     elif digit_word := has_a_digit_word(
-            next_buffer := buffer + next_char, parse_reversed
+        next_buffer := buffer + next_char, parse_reversed
     ):
         return WORD_TO_DIGIT[digit_word], True
     else:

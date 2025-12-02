@@ -1,4 +1,5 @@
 """https://adventofcode.com/2024/day/9"""
+
 import argparse
 from typing import Callable
 import timeit
@@ -11,25 +12,26 @@ parser.add_argument("-t", "--test", action="store_true", help="use test input")
 
 def timed(f: Callable) -> Callable:
     """Decorator to time the execution of a function."""
+
     def wrapper(*args, **kwargs):
         start_time = timeit.default_timer()
         result = f(*args, **kwargs)
         end_time = timeit.default_timer()
         print(f"Function {f.__name__} took {end_time - start_time:.6f} seconds")
         return result
+
     return wrapper
+
 
 ##################### </UTILS> #####################
 
 
 @timed
-def part_one(data: list[str]):
-    ...
+def part_one(data: list[str]): ...
 
 
 @timed
-def part_two(data: list[str]):
-    ...
+def part_two(data: list[str]): ...
 
 
 if __name__ == "__main__":

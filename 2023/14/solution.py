@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/14"""
+
 import argparse
 import re
 from copy import copy

@@ -17,7 +17,9 @@ class Parser:
 
     @staticmethod
     def parse_operation(s: str) -> Callable[[int], int]:
-        op_symbol, second_arg = re.match(r"Operation: new = old (.) (.+)", s.strip()).groups()
+        op_symbol, second_arg = re.match(
+            r"Operation: new = old (.) (.+)", s.strip()
+        ).groups()
         operator = Parser.OP_DICT[op_symbol]
         if second_arg.isnumeric():
             return lambda x: operator(x, int(second_arg))
@@ -37,4 +39,7 @@ class Parser:
 
     @classmethod
     def parse_input(cls, raw_input: list[str]) -> list[Monke]:
-        return [cls.parse_monke(raw_input[i * 7 + 1:(i + 1) * 7 - 1]) for i in range(0, len(raw_input) // 7 + 1)]
+        return [
+            cls.parse_monke(raw_input[i * 7 + 1 : (i + 1) * 7 - 1])
+            for i in range(0, len(raw_input) // 7 + 1)
+        ]

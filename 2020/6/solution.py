@@ -1,4 +1,5 @@
 """https://adventofcode.com/2020/day/6"""
+
 import argparse
 from functools import reduce
 from typing import Callable

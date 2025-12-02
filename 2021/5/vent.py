@@ -50,6 +50,6 @@ class Vent:
 
         full_range = zip(
             range(x1, x2 + direction_horizontal, direction_horizontal),
-            range(y1, y2 + direction_vertical, direction_vertical)
+            range(y1, y2 + direction_vertical, direction_vertical),
         )
         yield from full_range

@@ -1,4 +1,5 @@
 """https://adventofcode.com/2022/day/12"""
+
 from grid import Grid
 
 

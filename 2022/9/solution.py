@@ -1,7 +1,6 @@
 from rope import Knot
 
 
-
 def part_one(moves: list[tuple[str, int]]) -> int:
     """This rope bridge creaks as you walk along it. You aren't sure how old it is, or whether it can even support your
     weight.
@@ -271,6 +270,7 @@ def part_one(moves: list[tuple[str, int]]) -> int:
             tail.follow(head)
 
     return len(tail.move_history)
+
 
 def part_two(moves: list[tuple[str, int]]) -> int:
     """A rope snaps! Suddenly, the river is getting a lot closer than you remember. The bridge is still there, but
@@ -726,7 +726,10 @@ def part_two(moves: list[tuple[str, int]]) -> int:
 
 if __name__ == "__main__":
     with open("./input.txt") as f:
-        input_moves = [(d, int(n)) for d, n in map(lambda line: line.strip().split(), f.readlines())]
+        input_moves = [
+            (d, int(n))
+            for d, n in map(lambda line: line.strip().split(), f.readlines())
+        ]
 
     first_answer = part_one(input_moves)
     print(f"PART ONE: The answer to part one is equal to {first_answer}.")

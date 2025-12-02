@@ -3,10 +3,7 @@ from models import Route, Cave
 
 class CaveSystem:
     def __init__(self, passages: list[str]):
-        self.cave_map = {
-            "start": Cave("start"),
-            "end": Cave("end")
-        }
+        self.cave_map = {"start": Cave("start"), "end": Cave("end")}
         self.map_caves(passages)
         self.routes = []
 
@@ -30,17 +27,25 @@ class CaveSystem:
             if not start_cave.is_end:
                 start_cave.exits.append(end_cave.name)
 
-    def cave_available(self, route: Route, cave_name: str, with_new_rules: bool = False) -> bool:
+    def cave_available(
+        self, route: Route, cave_name: str, with_new_rules: bool = False
+    ) -> bool:
         cave = self.cave_map[cave_name]
         return not cave.is_start and (
-                cave.is_big or cave.is_end or cave not in route.caves or (
-                    with_new_rules and route.bonus_traversal_available)
+            cave.is_big
+            or cave.is_end
+            or cave not in route.caves
+            or (with_new_rules and route.bonus_traversal_available)
         )
 
     def traverse_cave(self, cave_name: str, route: Route, with_new_rules: bool = False):
         cave = self.cave_map[cave_name]
         route.add_cave(cave)
-        valid_exits = [cave_exit for cave_exit in cave.exits if self.cave_available(route, cave_exit, with_new_rules)]
+        valid_exits = [
+            cave_exit
+            for cave_exit in cave.exits
+            if self.cave_available(route, cave_exit, with_new_rules)
+        ]
         for exit_cave in valid_exits:
             self.traverse_cave(exit_cave, route.copy(), with_new_rules)
 

@@ -1,4 +1,5 @@
 """https://adventofcode.com/2022/day/21"""
+
 from dataclasses import dataclass
 from operator import add, sub, mul, floordiv
 from typing import Union
@@ -63,7 +64,7 @@ def get_monkey_value(monkey_dict: dict[str, FlatValueMonkey], monkey_id: str) ->
 
 
 def monkey_expression(
-        monkey_dict: dict[str, str], monkey_id: str
+    monkey_dict: dict[str, str], monkey_id: str
 ) -> ExpressionMonkey | int | str:
     if monkey_id == "humn":
         return "x"

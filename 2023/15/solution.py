@@ -1,4 +1,5 @@
 """https://adventofcode.com/2023/day/15"""
+
 import argparse
 import re
 from functools import reduce, partial

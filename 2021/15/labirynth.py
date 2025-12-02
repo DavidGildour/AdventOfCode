@@ -37,12 +37,17 @@ class Labirynth:
         return 0 <= x < self.width and 0 <= y < self.height
 
     def get_neighbours(self, cell: Cell) -> list[Cell]:
-        return list(filter(None, [
-            self.get(cell.x,     cell.y - 1),
-            self.get(cell.x - 1, cell.y),
-            self.get(cell.x + 1, cell.y),
-            self.get(cell.x,     cell.y + 1),
-        ]))
+        return list(
+            filter(
+                None,
+                [
+                    self.get(cell.x, cell.y - 1),
+                    self.get(cell.x - 1, cell.y),
+                    self.get(cell.x + 1, cell.y),
+                    self.get(cell.x, cell.y + 1),
+                ],
+            )
+        )
 
     def heuristic(self, cell: Cell) -> int:
         return cell.risk + cell.distance_to(self.exit)
@@ -71,7 +76,9 @@ class Labirynth:
                 if tentative_g_score < g_score[neighbour]:
                     came_from[neighbour] = current
                     g_score[neighbour] = tentative_g_score
-                    f_score[neighbour] = tentative_g_score + current.distance_to(neighbour)
+                    f_score[neighbour] = tentative_g_score + current.distance_to(
+                        neighbour
+                    )
                     open_set.add(neighbour)
 
         return
@@ -96,7 +103,7 @@ def expand_grid(grid: list[str]) -> list[list[Cell]]:
             cell_row = []
             for i in range(5):
                 for x, risk in enumerate(row):
-                    cell = Cell(x+(i*size), y+(j*size), wrap(int(risk) + i + j))
+                    cell = Cell(x + (i * size), y + (j * size), wrap(int(risk) + i + j))
                     cell_row.append(cell)
             result.append(cell_row)
 

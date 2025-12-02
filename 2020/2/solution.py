@@ -14,12 +14,16 @@ def validate(strings: Collection[str], criterion: Callable[[str], bool]) -> int:
 
 
 def meets_criteria_one(pass_string: str) -> bool:
-    low, high, ch, password = re.match(r"^(\d+)-(\d+) ([a-z]): ([a-z]+)$", pass_string).groups()
+    low, high, ch, password = re.match(
+        r"^(\d+)-(\d+) ([a-z]): ([a-z]+)$", pass_string
+    ).groups()
     return int(low) <= password.count(ch) <= int(high)
 
 
 def meets_criteria_two(pass_string: str) -> bool:
-    index1, index2, ch, password = re.match(r"^(\d+)-(\d+) ([a-z]): ([a-z]+)$", pass_string).groups()
+    index1, index2, ch, password = re.match(
+        r"^(\d+)-(\d+) ([a-z]): ([a-z]+)$", pass_string
+    ).groups()
     ch1, ch2 = password[int(index1) - 1], password[int(index2) - 1]
     ch_set = set(ch1 + ch2)
     return ch in ch_set and len(ch_set) > 1

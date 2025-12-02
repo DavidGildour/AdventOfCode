@@ -1,4 +1,5 @@
 """https://adventofcode.com/2022/day/13"""
+
 from functools import cmp_to_key, reduce
 from itertools import chain
 from operator import mul

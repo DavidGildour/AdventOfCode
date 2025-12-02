@@ -1,4 +1,5 @@
 """https://adventofcode.com/2024/day/2"""
+
 import argparse
 
 INCREASING_SET = {1, 2, 3}
